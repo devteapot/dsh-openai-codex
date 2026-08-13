@@ -1,0 +1,3 @@
+- insert:
+    - id: llm-openai-codex
+      name: '@devteapot/dsh-openai-codex'
