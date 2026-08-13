@@ -4,11 +4,11 @@
 
 面向 harness LLM seam 的 ChatGPT Plus/Pro OAuth 适配器。一个插件实例拥有 `openai-codex` 提供方路由，把 OAuth 会话存在一条凭据引用下，并通过 pi-ai 的 Codex catalog 提供方发流。登录、刷新与登出留在本包，以便 `@deepseek-ai/dsh-llm-pi-ai` 继续只处理密钥加端点的 profile。
 
-包根入口导出 Cordis 插件约定、`OpenAiCodexAdapter`、`OpenAiCodexAuth`（`ctx.openaiCodex`）、`createCodexModels` 以及 OAuth 存储辅助函数。历史与事件转换复用 `dsh-llm-pi-ai` 的 `./conversion` 子路径所导出的 `toPiContext` / `toStreamChunks`。
+包根入口导出 Cordis 插件约定、`OpenAiCodexAdapter`、`OpenAiCodexAuth`（`ctx.openaiCodex`）、`createCodexModels` 以及 OAuth 存储辅助函数。本包内部自带 pi-ai 历史与事件转换，因此从 Git 安装时不依赖尚未发布的 harness 导出。
 
 ## 安装
 
-此开发版本要求 DeepSeek Harness 同步加入 `@deepseek-ai/dsh-llm-pi-ai/conversion` 导出。目前尚无已发布的 harness 构建提供该子路径；peer 版本范围从预期的 `0.1.0-rc.7` 开始，使不兼容的安装在依赖解析时失败，而不是运行时失败。
+此开发版本要求 DeepSeek Harness `0.1.0-rc.6` 或更高版本。
 
 把固定到特定提交的版本安装进 profile：
 
@@ -16,14 +16,7 @@
 dsh plugin --profile web add github:devteapot/dsh-openai-codex#<commit>
 ```
 
-Git 依赖会运行本仓库的 `prepare` 构建。pnpm 10 及更高版本会先要求明确授权。如果首次安装报告构建被阻止，请把它打印的准确包键加入 `$DSH_HOME/profiles/web/pnpm-workspace.yaml`，然后重试上述命令：
-
-```yaml
-allowBuilds:
-  '@devteapot/dsh-openai-codex': true
-```
-
-本包声明了 `dsh.bundle`，因此 `dsh plugin add` 会在 profile 清单中跟踪它并应用 `cordis.patch.yml`。可用 `dsh plugin --profile web remove @devteapot/dsh-openai-codex` 删除。
+构建产物已提交，因此按 Git 哈希安装时不会运行包构建。本包声明了 `dsh.bundle`，所以 `dsh plugin add` 会在 profile 清单中跟踪它并应用 `cordis.patch.yml`。可用 `dsh plugin --profile web remove @devteapot/dsh-openai-codex` 删除。
 
 ## 配置
 
@@ -92,4 +85,4 @@ pi-ai 事件变为 harness 的 reasoning、text、tool-call、usage 与 finish �
 - **登录提示需要 `ctx.userQuestions`** — 没有该服务的组合无法完成 `/codex-login`；请自行提供 `AuthInteraction`，或直接写入会话 JSON。
 - **授权 URL 记在宿主日志里** — 浏览器回调监听的是 harness 进程，因此远程 Web 客户端应使用设备码登录，或在同一台机器上运行该命令。
 - **不导入 `~/.codex/auth.json`** — 不读取官方 Codex CLI 会话。请通过本插件粘贴或登录。
-- **`llm-pi-ai` 会忽略残留的 `openai-codex` profile** — 该路由名由本包占用。请从 `llm-pi-ai:` 节删除该键；它不会再被当成 API 密钥 profile 服务。
+- **已配置的 `llm-pi-ai` `openai-codex` profile 会与本插件冲突** — 安装本 bundle 前，请从 `llm-pi-ai:` 节删除该键。本插件独占该路由。

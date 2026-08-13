@@ -37,7 +37,8 @@ import type {
   StreamChunk,
 } from '@deepseek-ai/dsh-llm'
 import type { AttachmentStore } from '@deepseek-ai/dsh-attachment'
-import { toPiContext, toStreamChunks } from '@deepseek-ai/dsh-llm-pi-ai/conversion'
+import { toPiContext } from './context.ts'
+import { toStreamChunks } from './stream.ts'
 import { idleWatchdog, timeoutOf } from '@deepseek-ai/dsh-timeout'
 import { PROVIDER } from './config.ts'
 import type { ResolvedOpenAiCodexOptions } from './config.ts'

@@ -4,11 +4,11 @@ English | [中文](README.zh.md)
 
 ChatGPT Plus/Pro OAuth adapter for the harness LLM seam. One plugin instance owns the `openai-codex` provider route, stores the OAuth session under a credential reference, and streams through pi-ai's Codex catalog provider. Login, refresh, and logout stay in this package so `@deepseek-ai/dsh-llm-pi-ai` can keep its key-and-endpoint profiles.
 
-The package root exposes the Cordis plugin contract, `OpenAiCodexAdapter`, `OpenAiCodexAuth` (`ctx.openaiCodex`), `createCodexModels`, and the OAuth store helpers. History and event translation reuse `toPiContext` / `toStreamChunks` from `dsh-llm-pi-ai`'s `./conversion` subpath.
+The package root exposes the Cordis plugin contract, `OpenAiCodexAdapter`, `OpenAiCodexAuth` (`ctx.openaiCodex`), `createCodexModels`, and the OAuth store helpers. The package carries its pi-ai history and event conversion internally so a Git installation does not depend on an unpublished harness export.
 
 ## Install
 
-This development release requires the accompanying DeepSeek Harness change that exports `@deepseek-ai/dsh-llm-pi-ai/conversion`. No published harness build provides that subpath yet; the peer range starts at the expected `0.1.0-rc.7` release so incompatible installations fail during dependency resolution instead of at runtime.
+This development release requires DeepSeek Harness `0.1.0-rc.6` or newer.
 
 Install a commit-pinned copy into a profile:
 
@@ -16,14 +16,7 @@ Install a commit-pinned copy into a profile:
 dsh plugin --profile web add github:devteapot/dsh-openai-codex#<commit>
 ```
 
-Git dependencies run this repository's `prepare` build. pnpm 10 and newer require explicit permission before running it. If the first install reports a blocked build, add the exact package key it prints to `$DSH_HOME/profiles/web/pnpm-workspace.yaml`, then repeat the command:
-
-```yaml
-allowBuilds:
-  '@devteapot/dsh-openai-codex': true
-```
-
-The package declares `dsh.bundle`, so `dsh plugin add` tracks it in the profile manifest and applies `cordis.patch.yml`. Remove it with `dsh plugin --profile web remove @devteapot/dsh-openai-codex`.
+Built artifacts are committed, so installation by Git hash runs no package build. The package declares `dsh.bundle`, so `dsh plugin add` tracks it in the profile manifest and applies `cordis.patch.yml`. Remove it with `dsh plugin --profile web remove @devteapot/dsh-openai-codex`.
 
 ## Config
 
@@ -92,4 +85,4 @@ Recorded response content appends to the next request and does not invalidate it
 - **Login prompts need `ctx.userQuestions`** — a composition without that service cannot complete `/codex-login`; supply an `AuthInteraction` or write the session JSON yourself.
 - **The authorization URL is logged on the host** — the browser callback listens on the harness process, so a remote Web client must use device-code login or run the command on the same machine.
 - **No import of `~/.codex/auth.json`** — the official Codex CLI session is not read. Paste or login through this plugin.
-- **`llm-pi-ai` ignores a leftover `openai-codex` profile** — that route name is reserved here. Remove the key from the `llm-pi-ai:` section; it is not served as an API-key profile.
+- **A configured `llm-pi-ai` `openai-codex` profile conflicts with this plugin** — remove that key from the `llm-pi-ai:` section before installing this bundle. This plugin exclusively owns that route.
