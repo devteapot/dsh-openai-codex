@@ -16,7 +16,7 @@ Install a commit-pinned copy into a profile:
 dsh plugin --profile web add github:devteapot/dsh-openai-codex#<commit>
 ```
 
-Built artifacts are committed, so installation by Git hash runs no package build. The package declares `dsh.bundle`, so `dsh plugin add` tracks it in the profile manifest and applies `cordis.patch.yml`. Remove it with `dsh plugin --profile web remove @devteapot/dsh-openai-codex`.
+Built artifacts are committed, so installation by Git hash runs no package build. Harness and pi-ai packages are peers resolved through the profile's installation fallback, so the profile does not install a second provider SDK tree. The package declares `dsh.bundle`, so `dsh plugin add` tracks it in the profile manifest and applies `cordis.patch.yml`. Remove it with `dsh plugin --profile web remove @devteapot/dsh-openai-codex`.
 
 ## Config
 

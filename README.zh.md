@@ -16,7 +16,7 @@
 dsh plugin --profile web add github:devteapot/dsh-openai-codex#<commit>
 ```
 
-构建产物已提交，因此按 Git 哈希安装时不会运行包构建。本包声明了 `dsh.bundle`，所以 `dsh plugin add` 会在 profile 清单中跟踪它并应用 `cordis.patch.yml`。可用 `dsh plugin --profile web remove @devteapot/dsh-openai-codex` 删除。
+构建产物已提交，因此按 Git 哈希安装时不会运行包构建。Harness 与 pi-ai 包作为 peer 通过 profile 的安装级 fallback 解析，所以 profile 不会再安装一套提供方 SDK 依赖树。本包声明了 `dsh.bundle`，所以 `dsh plugin add` 会在 profile 清单中跟踪它并应用 `cordis.patch.yml`。可用 `dsh plugin --profile web remove @devteapot/dsh-openai-codex` 删除。
 
 ## 配置
 
