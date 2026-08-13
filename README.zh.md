@@ -37,7 +37,7 @@ dsh plugin --profile web add github:devteapot/dsh-openai-codex#<commit>
 
 `oauthEnv` 是凭据*引用*。settings 文档从不保存 token。未挂载凭据服务时，适配器仍读取该环境变量，但登录无法写入新会话。
 
-`/codex-login` 运行 pi-ai 的 ChatGPT 流程（`http://localhost:1455/auth/callback` 上的浏览器回调，或设备码）。提示走 `ctx.userQuestions`；授权 URL 与设备码也会写入宿主日志，也就是打开回调端口的那个进程。没有 `userQuestions` 的无头组合应自行实现 `AuthInteraction` 并调用 `ctx.openaiCodex.login()`，或把紧凑 JSON 会话写入该凭据引用。
+`/codex-login` 运行 pi-ai 的 ChatGPT 流程（`http://localhost:1455/auth/callback` 上的浏览器回调，或设备码）。提示走 `ctx.userQuestions`；浏览器登录会在该提示中显示授权 URL，授权 URL 或设备码也会写入宿主日志。回调 URL 本身不是登录链接。没有 `userQuestions` 的无头组合应自行实现 `AuthInteraction` 并调用 `ctx.openaiCodex.login()`，或把紧凑 JSON 会话写入该凭据引用。
 
 `GenerateOptions.provider` 必须是 `openai-codex`。`GenerateOptions.model` 是 `ctx.llm.listModels('openai-codex')` 中的 catalog 模型 id。`GenerateOptions.stop` 以 `UNSUPPORTED_OPTION` 拒绝。
 

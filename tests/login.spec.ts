@@ -97,4 +97,29 @@ describe('createCommandInteraction', () => {
     await expect(interaction.prompt({ type: 'manual_code', message: 'or wait' }))
       .resolves.toBe('')
   })
+
+  it('shows the authorization URL instead of the callback placeholder', async () => {
+    const ask = vi.fn(async () => ({
+      answers: [{ id: 'codex-login-prompt', selected: [] }],
+    }))
+    const ctx = new Context()
+    vi.spyOn(ctx, 'get').mockImplementation((name: string) => name === 'userQuestions' ? { ask } : undefined)
+    const interaction = createCommandInteraction(ctx, invocation())
+    const authorizationUrl = 'https://auth.openai.com/oauth/authorize?state=correct'
+    interaction.notify({ type: 'auth_url', url: authorizationUrl })
+
+    await interaction.prompt({
+      type: 'manual_code',
+      message: 'Complete login',
+      placeholder: 'http://localhost:1455/auth/callback',
+    })
+
+    expect(ask).toHaveBeenCalledWith(expect.objectContaining({
+      questions: [{
+        id: 'codex-login-prompt',
+        question: 'Complete login',
+        detail: authorizationUrl,
+      }],
+    }))
+  })
 })

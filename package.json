@@ -1,7 +1,7 @@
 {
   "name": "@devteapot/dsh-openai-codex",
   "description": "OpenAI Codex (ChatGPT OAuth) adapter and profile bundle for DeepSeek Harness",
-  "version": "0.1.0-alpha.2",
+  "version": "0.1.0-alpha.3",
   "publishConfig": {
     "access": "public"
   },

@@ -37,7 +37,7 @@ The route stays **dormant** until the referenced credential holds a JSON OAuth s
 
 `oauthEnv` is a credential *reference*. The settings document never holds the token. Without a mounted credentials service the adapter still reads the named environment variable, but login cannot store a new session.
 
-`/codex-login` runs the pi-ai ChatGPT flow (browser callback on `http://localhost:1455/auth/callback`, or device code). Prompts go through `ctx.userQuestions`; the authorization URL and device code are also written to the host logger, which is the process that opened the callback port. Headless compositions without `userQuestions` should call `ctx.openaiCodex.login()` with their own `AuthInteraction`, or write a compact JSON session to the credential reference.
+`/codex-login` runs the pi-ai ChatGPT flow (browser callback on `http://localhost:1455/auth/callback`, or device code). Prompts go through `ctx.userQuestions`; browser login shows the authorization URL in that prompt, and the authorization URL or device code is also written to the host logger. The callback URL itself is not a sign-in link. Headless compositions without `userQuestions` should call `ctx.openaiCodex.login()` with their own `AuthInteraction`, or write a compact JSON session to the credential reference.
 
 `GenerateOptions.provider` must be `openai-codex`. `GenerateOptions.model` is a catalog model id from `ctx.llm.listModels('openai-codex')`. `GenerateOptions.stop` is rejected with `UNSUPPORTED_OPTION`.
 

@@ -24,6 +24,7 @@ export function createCommandInteraction(
   invocation: CommandInvocation,
   ownerSignal?: AbortSignal,
 ): AuthInteraction {
+  let authorizationUrl: string | undefined
   const signal = ownerSignal === undefined
     ? invocation.signal
     : AbortSignal.any([invocation.signal, ownerSignal])
@@ -38,6 +39,7 @@ export function createCommandInteraction(
           }
           break
         case 'auth_url':
+          authorizationUrl = event.url
           ctx.logger.info(event.instructions ?? 'Open this URL to sign in with ChatGPT')
           ctx.logger.info(event.url)
           break
@@ -88,7 +90,9 @@ export function createCommandInteraction(
         questions: [{
           id: 'codex-login-prompt',
           question: prompt.message,
-          ...prompt.placeholder === undefined ? {} : { detail: prompt.placeholder },
+          ...prompt.type === 'manual_code'
+            ? authorizationUrl === undefined ? {} : { detail: authorizationUrl }
+            : prompt.placeholder === undefined ? {} : { detail: prompt.placeholder },
         }],
         agent: invocation.agent,
         signal: promptSignal,
